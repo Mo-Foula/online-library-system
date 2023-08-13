@@ -1,73 +1,126 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Online Library System API in Nest.js
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a simple online library system that allows users to view and filter books by categories, authors, price ranges and release date ranges.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Also allows admins to login and register other admins, and they can create books and add them to the system, also they can update any book by entering the fields to be updated.
 
-## Description
+This system supports claim-based authorization with admin and user roles.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
 
-```bash
-$ npm install
+## Steps to run
+### Environment Variables
+First create a .env file and add the needed environment variables to it.
+<br>
+There's a sample version .env file which contains all the required environment variables including:
+<ul>
+<li> PostgreSQL database variables
+<li> JWT secret
+<li> Password encryption salt 
+</ul>
+
+### Docker
+I've created a docker compose file to run PostgreSQL and it takes environment variables from .env file.
+You can use a hosted database version of PostgreSQL by modifying the .env file and ignoring this Docker compose file.
+The following command can be used to create a Docker Container.
+``` 
+docker-compose up -d 
 ```
 
-## Running the app
+### Database
+It is recommended to import the database dump found.
+The one that worked for me was the tar dump (dump-online-library-system-202308131254.tar).
+This dump has some roles and claims so that the application becomes easier to be tested.
 
-```bash
-# development
-$ npm run start
+users credentials:
+readers:
+  email: test1
+  pass: test
 
-# watch mode
-$ npm run start:dev
+admin_books:
+  email: test2admin
+  pass: test
 
-# production mode
-$ npm run start:prod
+### NPM commands
+This project was built using TypeScript enforces us to build the project before running (for production version)
+To build the project.
+```
+npm run build
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+To start the built project.
+```
+npm run start:prod
 ```
 
-## Support
+To Run the project in development mode.
+```
+npm run start:dev
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+To lint the project.
+```
+npm run lint
+```
 
-## Stay in touch
+To format the project.
+```
+npm run format
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## APIs
+All APIs are found in the insomnia package called online-library-system-package.json provided in the root folder
 
-## License
+### POST auth/signup
+This endpoint has no authorization and any user can register himself
 
-Nest is [MIT licensed](LICENSE).
+### POST auth/signupAdmin
+This endpoint has authorization for admins only and is used to register new admins
+
+### POST auth/login
+User must login to generate a bearer access token in order to do actions that require authorization
+
+### POST books
+Admin authorized endpoint, create new book in the database
+Example:
+```
+{
+	"name": "Lost On You",
+	"categories": [4],
+	
+	"price": 422,
+	"authors": [2],
+	
+	"releaseDate": "2016-09-12",
+	"numberOfPages": 404
+}
+```
+
+### GET books
+Reader (and admin) authorized endpoint, list books in the system.
+This endpoint supports: pagination, filter by categories, authors, price range and release date range
+Example:
+```
+limit: 3
+page: 1
+minPrice: 51
+maxPrice: 800
+authors: [2]
+startDate: 2010-09-01
+endDate: 2015-09-01
+```
+
+### GET books/:id
+Reader (and admin) authorized endpoint, get certain book data.
+
+### PATCH books/:id
+Reader (and admin) authorized endpoint, update book by id, any parameters could be send.
+Example:
+```
+{
+	"price": 15,
+	"authors": [2]
+}
+```
+
+

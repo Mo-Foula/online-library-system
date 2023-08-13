@@ -23,13 +23,13 @@ import { StringToArray } from 'src/helpers/string-to-array'
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @Post('/new')
+  @Post('/')
   create(@Body() createBookDto: CreateBookDto) {
     return this.booksService.create(createBookDto)
   }
 
   // findAll(@Query() pagination: { pageSize: string; pageNumber: string }) {
-  @Get('/list')
+  @Get('/')
   // @UsePipes(new ValidationPipe({ transform: true }))
   async findAll(@Query() listBooksDtoController: ListBooksDtoController) {
     const {
@@ -66,18 +66,13 @@ export class BooksController {
     return await this.booksService.findAll(listBooksDtoService)
   }
 
-  @Get('/get/:id')
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.booksService.findOne(+id)
   }
 
-  @Patch('/update/:id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     return this.booksService.update(+id, updateBookDto)
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.booksService.remove(+id)
-  // }
 }
