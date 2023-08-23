@@ -10,6 +10,9 @@ This system supports claim-based authorization with admin and user roles.
 
 ## Steps to run
 ### Environment Variables
+I've added .env file with required variables and these variables will be used to restore the database dump so ne need for this section unless you need to create the .env file for yourself.
+
+
 First create a .env file and add the needed environment variables to it.
 <br>
 There's a sample version .env file which contains all the required environment variables including:
@@ -27,9 +30,41 @@ The following command can be used to create a Docker Container.
 docker-compose up -d 
 ```
 
+### Restoring database dump
+Copy db dump to the container:
+```
+docker cp library-system.tar postgres_library_system:/db.tar 
+```
+
+Restore the database dump (note that it will give error schema public exists but it will restore the database normally no need to worry about the error)
+```
+docker exec -it postgres_library_system pg_restore -U db-user-foula -d online-library-system /db.tar
+```
+
+### Running the project
+Install project dependencies
+```
+npm i
+```
+
+Install Nest CLI to run the project
+```
+npm i -g @nestjs/cli
+```
+
+if the command above did not work please try this
+```
+npm i @nestjs/cli
+```
+
+Run the project (Default port is 3000 if this port is in use, it could be replaced in the .env file)
+```
+npm run build:start
+```
+
 ### Database
-It is recommended to import the database dump found.
-The one that worked for me was the tar dump (dump-online-library-system-202308131254.tar).
+It is recommended to import the database dump found (as mentioned in the docker section)
+(library-system.tar).
 This dump has some roles and claims so that the application becomes easier to be tested.
 
 users credentials:

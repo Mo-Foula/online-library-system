@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   db:
+    container_name: postgres_library_system
     image: postgres:14
     env_file:
       - .env
@@ -11,8 +12,6 @@ services:
       - "5435:5432"
 
   # app:
-  #   links:
-  #     - db:db
   #   depends_on:
   #     - db
   #   restart: unless-stopped
@@ -28,4 +27,6 @@ services:
 
 volumes:
   postgres_data_volume:
-    driver: local
+    driver: local  
+  postgres_data_volume_2:
+    name: test

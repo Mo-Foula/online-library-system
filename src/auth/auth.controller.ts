@@ -19,6 +19,6 @@ export class AuthController {
 
   @Post('/signupAdmin')
   registerAdmin(@Body() signUpUserDto: SignUpUserDto) {
-    return this.authService.registerUser(signUpUserDto)
+    return this.authService.registerAdmin(signUpUserDto)
   }
 }
